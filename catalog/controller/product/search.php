@@ -143,7 +143,8 @@ class ControllerProductSearch extends Controller {
 		$data['text_compare'] = sprintf($this->language->get('text_compare'), (isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
 		$data['text_sort'] = $this->language->get('text_sort');
 		$data['text_limit'] = $this->language->get('text_limit');
-
+		$data['text_sale'] = $this->language->get('text_sale');
+		$data['text_new'] = $this->language->get('text_new');
 		$data['entry_search'] = $this->language->get('entry_search');
 		$data['entry_description'] = $this->language->get('entry_description');
 
@@ -244,16 +245,46 @@ class ControllerProductSearch extends Controller {
 					$rating = false;
 				}
 
-				$data['products'][] = array(
-					'product_id'  => $result['product_id'],
-					'thumb'       => $image,
-					'name'        => $result['name'],
-					'description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get($this->config->get('config_theme') . '_product_description_length')) . '..',
-					'price'       => $price,
-					'special'     => $special,
-					'tax'         => $tax,
-					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
-					'rating'      => $result['rating'],
+				/* Get new product */
+                $filter_data = array(
+                        'sort'  => 'p.date_added',
+                        'order' => 'DESC',
+                        'start' => 0,
+                        'limit' => 10
+                );
+
+                $new_results = $this->model_catalog_product->getProducts($filter_data);
+                /* End */
+                $is_new = false;
+                if ($new_results) {
+                    foreach($new_results as $new_r) {
+                        if($result['product_id'] == $new_r['product_id']) {
+                            $is_new = true;
+                        }
+                    }
+                }
+                //% price %
+				if ((float)$result['special']) {
+					$price2 = $this->tax->calculate($result['price'],$result['tax_class_id'], $this->config->get('config_tax'));
+					$special2 = $this->tax->calculate($result['special'],$result['tax_class_id'], $this->config->get('config_tax'));
+				} else {
+					$price2 = false;
+					$special2 = false;
+				}
+                
+			$data['products'][] = array(
+				'product_id'  => $result['product_id'],
+				'is_new'      => $is_new,
+                'thumb'      => $image,
+                'price2'     => $price2,
+                'special2'     => $special2,
+				'name'        => $result['name'],
+				'description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get($this->config->get('config_theme') . '_product_description_length')) . '..',
+				'price'       => $price,
+				'special'     => $special,
+				'tax'         => $tax,
+				'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
+				'rating'      => $result['rating'],
 					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'] . $url)
 				);
 			}

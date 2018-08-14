@@ -6,7 +6,7 @@ $_['heading_title']            = 'Shopping Cart';
 $_['text_success']             = 'Success: You have added <a href="%s">%s</a> to your <a href="%s">shopping cart</a>!';
 $_['text_remove']              = 'Success: You have modified your shopping cart!';
 $_['text_login']               = 'Attention: You must <a href="%s">login</a> or <a href="%s">create an account</a> to view prices!';
-$_['text_items']               = '%s item(s) - %s';
+$_['text_items']     = '<span class="text-top-cart">shopping cart</span><span class="item-top-cart">%s item(s) -<span> %s</span></span>';
 $_['text_points']              = 'Reward Points: %s';
 $_['text_next']                = 'What would you like to do next?';
 $_['text_next_choice']         = 'Choose if you have a discount code or reward points you want to use or would like to estimate your delivery cost.';
@@ -25,6 +25,8 @@ $_['text_payment_recurring']   = 'Payment Profile';
 $_['text_trial_description']   = '%s every %d %s(s) for %d payment(s) then';
 $_['text_payment_description'] = '%s every %d %s(s) for %d payment(s)';
 $_['text_payment_cancel']      = '%s every %d %s(s) until canceled';
+$_['button_checkout_cart']  = 'Procced To Checkout';
+$_['button_update_cart']    = 'Update Shopping Cart';
 
 // Column
 $_['column_image']             = 'Image';

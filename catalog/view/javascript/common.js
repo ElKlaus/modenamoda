@@ -23,6 +23,50 @@ function getURLVar(key) {
 }
 
 $(document).ready(function() {
+		// zoom
+	$(".thumbnails-image img").elevateZoom({
+		zoomType : "window",
+		cursor: "crosshair",
+		gallery:'gallery_01', 
+		galleryActiveClass: "active", 
+		imageCrossfade: true,
+		responsive: true,
+		zoomWindowWidth: 360,
+		zoomWindowHeight: 360,
+		zoomWindowOffetx: 0,
+		zoomWindowOffety: 0
+	});
+
+	//related products
+	$(".view-related").owlCarousel({
+		autoPlay : false,
+		slideSpeed : 3000,
+		paginationSpeed : 3000,
+		rewindSpeed : 3000,
+		navigation : true,
+		stopOnHover : true,
+		pagination : false,
+		scrollPerPage:false,
+		items : 4,
+		itemsDesktop : [1199,3],
+		itemsDesktopSmall : [991,2],
+		itemsTablet: [768,2],
+		itemsMobile : [400,1],
+	});
+
+ // slider  
+	$(".image-additional").owlCarousel({
+		navigation:true,
+		pagination: false,
+		slideSpeed : 1000,
+		goToFirstSpeed : 1500,
+		autoHeight : true,
+		items :4, //10 items above 1000px browser width
+		itemsDesktop : [1199,4], //5 items between 1000px and 901px
+		itemsDesktopSmall : [991,4], //4.3 betweem 900px and 601px
+		itemsTablet: [767,3], //2 items between 600 and 0
+		itemsMobile : [479,2] // itemsMobile disabled - inherit from itemsTablet option
+	});	
 	// Highlight any found errors
 	$('.text-danger').each(function() {
 		var element = $(this).parent().parent();
@@ -54,7 +98,7 @@ $(document).ready(function() {
 	$('#search input[name=\'search\']').parent().find('button').on('click', function() {
 		var url = $('base').attr('href') + 'index.php?route=product/search';
 
-		var value = $('header #search input[name=\'search\']').val();
+		var value = $('.top-search-content #search input[name=\'search\']').val();
 
 		if (value) {
 			url += '&search=' + encodeURIComponent(value);
@@ -65,7 +109,7 @@ $(document).ready(function() {
 
 	$('#search input[name=\'search\']').on('keydown', function(e) {
 		if (e.keyCode == 13) {
-			$('header #search input[name=\'search\']').parent().find('button').trigger('click');
+			$('.top-search-content #search input[name=\'search\']').parent().find('button').trigger('click');
 		}
 	});
 
@@ -82,41 +126,43 @@ $(document).ready(function() {
 	});
 
 	// Product List
-	$('#list-view').click(function() {
-		$('#content .product-grid > .clearfix').remove();
+  	$('#list-view').click(function() {
+    $('#content .product-grid > .clearfix').remove();
 
-		$('#content .row > .product-grid').attr('class', 'product-layout product-list col-xs-12');
-		$('#grid-view').removeClass('active');
-		$('#list-view').addClass('active');
+    $('#content  .product-grid').attr('class', 'product-layout product-list');
 
-		localStorage.setItem('display', 'list');
-	});
+    $('.product-list .product-thumb .image').addClass("col-md-4 col-sm-4 col-xs-12");
+    $('.product-list .product-thumb .caption').addClass("col-md-8 col-sm-8 col-xs-12");
+
+    localStorage.setItem('display', 'list');
+            $('.btn-group').find('#list-view').addClass('selected');
+            $('.btn-group').find('#grid-view').removeClass('selected');
+  	});
 
 	// Product Grid
 	$('#grid-view').click(function() {
-		// What a shame bootstrap does not take into account dynamically loaded columns
-		var cols = $('#column-right, #column-left').length;
+    // What a shame bootstrap does not take into account dynamically loaded columns
+    var cols = $('#column-right, #column-left').length;
 
-		if (cols == 2) {
-			$('#content .product-list').attr('class', 'product-layout product-grid col-lg-6 col-md-6 col-sm-12 col-xs-12');
-		} else if (cols == 1) {
-			$('#content .product-list').attr('class', 'product-layout product-grid col-lg-4 col-md-4 col-sm-6 col-xs-12');
-		} else {
-			$('#content .product-list').attr('class', 'product-layout product-grid col-lg-3 col-md-3 col-sm-6 col-xs-12');
-		}
+    if (cols == 2) {
+      $('#content .product-list').attr('class', 'product-layout product-grid col-lg-6 col-md-6 col-sm-12 col-xs-12');
+    } else if (cols == 1) {
+      $('#content .product-list').attr('class', 'product-layout product-grid col-lg-4 col-md-4 col-sm-6 col-xs-12');
+    } else {
+      $('#content .product-list').attr('class', 'product-layout product-grid col-lg-4 col-md-4 col-sm-6 col-xs-12');
+    }
 
-		$('#list-view').removeClass('active');
-		$('#grid-view').addClass('active');
-
-		localStorage.setItem('display', 'grid');
+    localStorage.setItem('display', 'grid');
+            $('.product-grid .product-thumb ').find('.image').removeClass("col-md-4 col-sm-4 col-xs-12");
+            $('.product-grid .product-thumb ').find('.caption').removeClass("col-md-8 col-sm-8 col-xs-12");
+            $('.btn-group').find('#grid-view').addClass('selected');
+            $('.btn-group').find('#list-view').removeClass('selected');
 	});
 
 	if (localStorage.getItem('display') == 'list') {
-		$('#list-view').trigger('click');
-		$('#list-view').addClass('active');
+	$('#list-view').trigger('click');
 	} else {
-		$('#grid-view').trigger('click');
-		$('#grid-view').addClass('active');
+	$('#grid-view').trigger('click');
 	}
 
 	// Checkout
@@ -161,7 +207,7 @@ var cart = {
 
 					// Need to set timeout otherwise it wont update the total
 					setTimeout(function () {
-						$('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
+						$('#cart > button').html('<span id="cart-total"><span class="icon_bag_alt"></span>' + json['total'] + '</span>');
 					}, 100);
 
 					$('html, body').animate({ scrollTop: 0 }, 'slow');
@@ -189,7 +235,7 @@ var cart = {
 			success: function(json) {
 				// Need to set timeout otherwise it wont update the total
 				setTimeout(function () {
-					$('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
+					$('#cart > button').html('<span id="cart-total"><span class="icon_bag_alt"></span>' + json['total'] + '</span>');
 				}, 100);
 
 				if (getURLVar('route') == 'checkout/cart' || getURLVar('route') == 'checkout/checkout') {
@@ -218,7 +264,7 @@ var cart = {
 			success: function(json) {
 				// Need to set timeout otherwise it wont update the total
 				setTimeout(function () {
-					$('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
+					$('#cart > button').html('<span id="cart-total"><span class="icon_bag_alt"></span>' + json['total'] + '</span>');
 				}, 100);
 
 				if (getURLVar('route') == 'checkout/cart' || getURLVar('route') == 'checkout/checkout') {
@@ -253,7 +299,7 @@ var voucher = {
 			success: function(json) {
 				// Need to set timeout otherwise it wont update the total
 				setTimeout(function () {
-					$('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
+					$('#cart > button').html('<span id="cart-total"><span class="icon_bag_alt"></span>' + json['total'] + '</span>');
 				}, 100);
 
 				if (getURLVar('route') == 'checkout/cart' || getURLVar('route') == 'checkout/checkout') {
@@ -288,6 +334,9 @@ var wishlist = {
 				}
 
 				$('#wishlist-total span').html(json['total']);
+
+				$('#wishlist-total-header span').html(json['total']);
+
 				$('#wishlist-total').attr('title', json['total']);
 
 				$('html, body').animate({ scrollTop: 0 }, 'slow');
@@ -316,6 +365,8 @@ var compare = {
 					$('#content').parent().before('<div class="alert alert-success"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 
 					$('#compare-total').html(json['total']);
+
+					$('#compare-total-header span').html(json['total']);
 
 					$('html, body').animate({ scrollTop: 0 }, 'slow');
 				}
